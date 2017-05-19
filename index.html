@@ -1,0 +1,65 @@
+<html>
+	<head>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	</head>
+	<body>
+		<button id="get_sedinte">Vezi sedinte</button>
+		<button id="get_dosare">Vezi dosare</button>
+		<div id="container"></div>
+		<script>
+$(function() {
+	$('#get_sedinte').click(function() {
+		$.get('http://localhost:5000/app/sedinte', function(data) {
+			var container = $("#container");
+			container.html('');
+			var p = $('<p>');
+			p.html(data['data']);
+			container.append(p);
+
+			for (var i in data['itemuri']) {
+				var a = $('<a>');
+				var item = data['itemuri'][i];
+				a.html(item['descriere']);
+				a.attr('href', item['url']);
+				container.append(a);
+				container.append($('<br>'));
+			}
+		});
+	});
+
+	$('#get_dosare').click(function() {
+		$.get('http://localhost:5000/app/dezbateri', function(data) {
+			var container = $('#container');
+
+			var table = $('<table>');
+			var tbody = $('<tbody>');
+
+			var tr = $('<tr>');
+			var keys = Object.keys(data[0]).sort();
+			for (var i in keys) {
+				var td = $('<td>');
+				td.html(keys[i]);
+				tr.append(td);
+			}
+			tbody.append(tr);
+
+			for (var i in data) {
+				var dezbatere = data[i];
+				var tr = $('<tr>');
+				for (var i in keys) {
+					var td = $('<td>');
+					td.html(dezbatere[keys[i]]);
+					tr.append(td);
+				}
+				tbody.append(tr);
+			}
+
+			table.html(tbody);
+			container.html(table);
+		});
+	});
+	
+});
+		</script>
+	</body>
+</html>
